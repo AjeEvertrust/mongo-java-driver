@@ -17,9 +17,8 @@
 package org.mongodb.scala.model
 
 import scala.collection.JavaConverters._
-
-import com.mongodb.client.model.{ PushOptions => JPushOptions, Updates => JUpdates }
-
+import com.mongodb.client.model.{PushOptions => JPushOptions, Updates => JUpdates}
+import org.mongodb.scala.bson.BsonTransformer
 import org.mongodb.scala.bson.conversions.Bson
 
 /**
@@ -48,7 +47,7 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/set/ \$set]]
    */
-  def set[TItem](fieldName: String, value: TItem): Bson = JUpdates.set(fieldName, value)
+  def set[TItem](fieldName: String, value: TItem)(implicit bt : BsonTransformer[TItem]): Bson = JUpdates.set(fieldName, bt.apply(value))
 
   /**
    * Creates an update that deletes the field with the given name.
@@ -70,7 +69,8 @@ object Updates {
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/setOnInsert/ \$setOnInsert]]
    * @see UpdateOptions#upsert(boolean)
    */
-  def setOnInsert[TItem](fieldName: String, value: TItem): Bson = JUpdates.setOnInsert(fieldName, value)
+  def setOnInsert[TItem](fieldName: String, value: TItem)(implicit bt : BsonTransformer[TItem]): Bson =
+    JUpdates.setOnInsert(fieldName, bt.apply(value))
 
   /**
    * Creates an update that renames a field.
@@ -112,7 +112,7 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/min/ \$min]]
    */
-  def min[TItem](fieldName: String, value: TItem): Bson = JUpdates.min(fieldName, value)
+  def min[TItem](fieldName: String, value: TItem)(implicit bt : BsonTransformer[TItem]): Bson = JUpdates.min(fieldName, bt.apply(value))
 
   /**
    * Creates an update that sets the value of the field to the given value if the given value is greater than the current value of the
@@ -124,7 +124,7 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/min/ \$min]]
    */
-  def max[TItem](fieldName: String, value: TItem): Bson = JUpdates.max(fieldName, value)
+  def max[TItem](fieldName: String, value: TItem)(implicit bt : BsonTransformer[TItem]): Bson = JUpdates.max(fieldName, bt.apply(value))
 
   /**
    * Creates an update that sets the value of the field to the current date as a BSON date.
@@ -156,7 +156,8 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/addToSet/ \$addToSet]]
    */
-  def addToSet[TItem](fieldName: String, value: TItem): Bson = JUpdates.addToSet(fieldName, value)
+  def addToSet[TItem](fieldName: String, value: TItem)(implicit bt : BsonTransformer[TItem]): Bson =
+    JUpdates.addToSet(fieldName, bt.apply(value))
 
   /**
    * Creates an update that adds each of the given values to the array value of the field with the given name, unless the value is
@@ -168,7 +169,8 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/addToSet/ \$addToSet]]
    */
-  def addEachToSet[TItem](fieldName: String, values: TItem*): Bson = JUpdates.addEachToSet(fieldName, values.asJava)
+  def addEachToSet[TItem](fieldName: String, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson =
+    JUpdates.addEachToSet(fieldName, (values.map(bt.apply):_*).asJava)
 
   /**
    * Creates an update that adds the given value to the array value of the field with the given name.
@@ -179,7 +181,7 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/push/ \$push]]
    */
-  def push[TItem](fieldName: String, value: TItem): Bson = JUpdates.push(fieldName, value)
+  def push[TItem](fieldName: String, value: TItem)(implicit bt : BsonTransformer[TItem]): Bson = JUpdates.push(fieldName, bt.apply(value))
 
   /**
    * Creates an update that adds each of the given values to the array value of the field with the given name.
@@ -190,7 +192,8 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/push/ \$push]]
    */
-  def pushEach[TItem](fieldName: String, values: TItem*): Bson = JUpdates.pushEach(fieldName, values.asJava)
+  def pushEach[TItem](fieldName: String, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson =
+    JUpdates.pushEach(fieldName, (values.map(bt.apply) : _*).asJava)
 
   /**
    * Creates an update that adds each of the given values to the array value of the field with the given name, applying the given
@@ -203,8 +206,8 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/push/ \$push]]
    */
-  def pushEach[TItem](fieldName: String, options: JPushOptions, values: TItem*): Bson =
-    JUpdates.pushEach(fieldName, values.asJava, options)
+  def pushEach[TItem](fieldName: String, options: JPushOptions, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson =
+    JUpdates.pushEach(fieldName, (values.map(bt.apply):_*).asJava, options)
 
   /**
    * Creates an update that removes all instances of the given value from the array value of the field with the given name.
@@ -215,7 +218,8 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/pull/ \$pull]]
    */
-  def pull[TItem](fieldName: String, value: TItem): Bson = JUpdates.pull(fieldName, value)
+  def pull[TItem](fieldName: String, value: TItem)(implicit bt : BsonTransformer[TItem]): Bson =
+    JUpdates.pull(fieldName, bt.apply(value))
 
   /**
    * Creates an update that removes from an array all elements that match the given filter.
@@ -235,7 +239,8 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/pull/ \$pull]]
    */
-  def pullAll[TItem](fieldName: String, values: TItem*): Bson = JUpdates.pullAll(fieldName, values.asJava)
+  def pullAll[TItem](fieldName: String, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson =
+    JUpdates.pullAll(fieldName, (values.map(bt.apply) :_*).asJava)
 
   /**
    * Creates an update that pops the first element of an array that is the value of the field with the given name.
