@@ -169,7 +169,7 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/addToSet/ \$addToSet]]
    */
-  def addEachToSet[TItem](fieldName: String, values: TItem*)(implicit bt : BsonTransformer[TItem]): Bson =
+  def addEachToSet[TItem](fieldName: String, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson =
     JUpdates.addEachToSet(fieldName, (values.map(bt.apply):_*).asJava)
 
   /**
@@ -192,7 +192,7 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/push/ \$push]]
    */
-  def pushEach[TItem](fieldName: String, values: TItem*)(implicit bt : BsonTransformer[TItem]): Bson =
+  def pushEach[TItem](fieldName: String, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson =
     JUpdates.pushEach(fieldName, (values.map(bt.apply) : _*).asJava)
 
   /**
@@ -206,7 +206,7 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/push/ \$push]]
    */
-  def pushEach[TItem](fieldName: String, options: JPushOptions, values: TItem*)(implicit bt : BsonTransformer[TItem]): Bson =
+  def pushEach[TItem](fieldName: String, options: JPushOptions, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson =
     JUpdates.pushEach(fieldName, (values.map(bt.apply):_*).asJava, options)
 
   /**
@@ -239,7 +239,7 @@ object Updates {
    * @return the update
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/update/pull/ \$pull]]
    */
-  def pullAll[TItem](fieldName: String, values: TItem*)(implicit bt : BsonTransformer[TItem]): Bson =
+  def pullAll[TItem](fieldName: String, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson =
     JUpdates.pullAll(fieldName, (values.map(bt.apply) :_*).asJava)
 
   /**

@@ -159,7 +159,9 @@ object Filters {
    * @return the filter
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/query/in \$in]]
    */
-  def in[TItem](fieldName: String, values: TItem*)(implicit bt : BsonTransformer[TItem]): Bson = JFilters.in(fieldName,(values.map(bt.apply) : _*).asJava)
+  def in[TItem](fieldName: String, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson = JFilters.in(fieldName,(values.map(bt
+    .apply)
+    : _*).asJava)
 
   /**
    * Creates a filter that matches all documents where the value of a field does not equal any of the specified values or does not exist.
@@ -170,7 +172,8 @@ object Filters {
    * @return the filter
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/query/nin \$nin]]
    */
-  def nin[TItem](fieldName: String, values: TItem*)(implicit bt : BsonTransformer[TItem]): Bson = JFilters.nin(fieldName, (values.map(bt.apply) : _*).asJava)
+  def nin[TItem](fieldName: String, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson = JFilters.nin(fieldName, (values.map(bt
+    .apply) : _*).asJava)
 
   /**
    * Creates a filter that performs a logical AND of the provided list of filters.  Note that this will only generate a "\$and"
@@ -360,7 +363,7 @@ object Filters {
    * @return the filter
    * @see [[https://www.mongodb.com/docs/manual/reference/operator/query/all \$all]]
    */
-  def all[TItem](fieldName: String, values: TItem*)(implicit bt : BsonTransformer[TItem]): Bson =
+  def all[TItem](fieldName: String, values: Seq[TItem])(implicit bt : BsonTransformer[TItem]): Bson =
     JFilters.all(fieldName, (values.map(bt.apply) : _*).asJava)
 
   /**
